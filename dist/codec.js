@@ -7,6 +7,7 @@ function chunk(type,data){const name=new TextEncoder().encode(type),body=concat(
 export function sampleIndices(durations,count){const sum=durations.reduce((a,b)=>a+b,0);let cursor=0,edge=durations[0];return Array.from({length:count},(_,i)=>{const t=i*sum/count;while(cursor<durations.length-1&&t>=edge){cursor++;edge+=durations[cursor];}return cursor;});}
 // Full RGBA frames, no disposal, SOURCE blend; zlib stream per PNG frame.
 export async function encodeAPNG(frames,seconds,loops){
+ if(typeof CompressionStream==='undefined')throw Error('APNG保存にはiOS/iPadOS 16.4以降、または圧縮機能に対応するブラウザーが必要です。');
  if(frames.length<5||frames.length>20||!Number.isInteger(seconds)||seconds<1||seconds>4||!Number.isInteger(loops)||loops<1||loops>4)throw Error('出力設定が範囲外です。');
  const first=frames[0],{width,height}=first;if(frames.some(f=>f.width!==width||f.height!==height))throw Error('フレームのサイズが一致しません。');
  if(!frames.some(f=>f.data.some((v,i)=>v!==first.data[i])))throw Error('すべてのフレームが同じ画像です。動きのあるGIFを選ぶか、フレーム数を変更してください。');
